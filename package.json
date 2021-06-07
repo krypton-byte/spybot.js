@@ -1,0 +1,26 @@
+{
+  "name": "spybot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "krypton-byte",
+  "license": "ISC",
+  "dependencies": {
+    "@adiwajshing/baileys": "^3.5.0",
+    "axios": "^0.21.1",
+    "node-fetch": "^2.6.1",
+    "request": "^2.88.2",
+    "ws": "^7.4.6"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0"
+  }
+}
