@@ -7,9 +7,9 @@ const spybot = new WAConnection();
 const Session = axios.create({ baseURL: 'https://linuxnews.herokuapp.com' });
 const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 const linuxnews = {
-    email:'ajaysetiady6434@gmail.com', //signup terlebih dahulu di linuxnews.herokuapp.com
-    password:'anjaybanget',
-    token:'bfe4e2169ab2320a67e734582abfb4ebdef934ee490d4a03287593dae73072a4792f32acdf208a8e754387c63472a2f540396da5e716bfd53a624c3f144704ec'
+    email:'', //signup terlebih dahulu di linuxnews.herokuapp.com
+    password:'',
+    token:''
 }
 async function prettyTrap(chat_id){
     st=""
